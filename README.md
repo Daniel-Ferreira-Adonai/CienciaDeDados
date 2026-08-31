@@ -105,7 +105,7 @@ Dados abertos de acidentes registrados pela **Polícia Rodoviária Federal (PRF)
 | Daniel Felix | 2320432 | d.calpi100@gmail.com |
 | Maximus Ulisses | 2320436 | Ulissesmagalhaes308@gmail.com |
 | Josue Castro | 2320426 | josubeba115@gmail.com |
-| [Nome do integrante 4] | [Matrícula] | [e-mail] |
+| Davi Klein | 2327146 | davimonteklein1711@gmail.com |
 
 Disciplina: Ciência de Dados — Universidade de Fortaleza (UNIFOR)
 
