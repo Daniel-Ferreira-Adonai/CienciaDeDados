@@ -102,9 +102,9 @@ Dados abertos de acidentes registrados pela **Polícia Rodoviária Federal (PRF)
 
 | Nome | Matrícula | E-mail |
 |------|-----------|--------|
-| [Nome do integrante 1] | [Matrícula] | [e-mail] |
-| [Nome do integrante 2] | [Matrícula] | [e-mail] |
-| [Nome do integrante 3] | [Matrícula] | [e-mail] |
+| Daniel Felix | 2320432 | d.calpi100@gmail.com |
+| Maximus Ulisses | 2320436 | Ulissesmagalhaes308@gmail.com |
+| Josue Castro | 2320426 | josubeba115@gmail.com |
 | [Nome do integrante 4] | [Matrícula] | [e-mail] |
 
 Disciplina: Ciência de Dados — Universidade de Fortaleza (UNIFOR)
