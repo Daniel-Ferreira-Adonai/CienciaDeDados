@@ -40,3 +40,7 @@ Thumbs.db
 build/
 dist/
 *.egg-info/
+
+# Dados brutos locais (baixados conforme data/raw/README.md)
+data/raw/*.csv
+data/raw/*.zip

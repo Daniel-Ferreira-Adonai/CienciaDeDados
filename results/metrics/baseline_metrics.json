@@ -1,0 +1,45 @@
+{
+  "model": "LogisticRegression + OneHotEncoder",
+  "random_state": 42,
+  "test_size": 0.2,
+  "n_train": 33857,
+  "n_test": 8465,
+  "accuracy": 0.597282929710573,
+  "balanced_accuracy": 0.6110393805152489,
+  "precision_macro": 0.4810932058791031,
+  "recall_macro": 0.6110393805152489,
+  "f1_macro": 0.48994601616744715,
+  "classification_report": {
+    "Com Vítimas Fatais": {
+      "precision": 0.21693414499169894,
+      "recall": 0.6511627906976745,
+      "f1-score": 0.3254462432544624,
+      "support": 602.0
+    },
+    "Com Vítimas Feridas": {
+      "precision": 0.8818861936068919,
+      "recall": 0.5942560342193706,
+      "f1-score": 0.7100483709044446,
+      "support": 6546.0
+    },
+    "Sem Vítimas": {
+      "precision": 0.3444592790387183,
+      "recall": 0.5876993166287016,
+      "f1-score": 0.43434343434343436,
+      "support": 1317.0
+    },
+    "accuracy": 0.597282929710573,
+    "macro avg": {
+      "precision": 0.4810932058791031,
+      "recall": 0.6110393805152489,
+      "f1-score": 0.48994601616744715,
+      "support": 8465.0
+    },
+    "weighted avg": {
+      "precision": 0.7509833726083531,
+      "recall": 0.597282929710573,
+      "f1-score": 0.6398021946142922,
+      "support": 8465.0
+    }
+  }
+}

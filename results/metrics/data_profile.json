@@ -1,0 +1,94 @@
+{
+  "rows": 42322,
+  "columns": 30,
+  "column_names": [
+    "id",
+    "data_inversa",
+    "dia_semana",
+    "horario",
+    "uf",
+    "br",
+    "km",
+    "municipio",
+    "causa_acidente",
+    "tipo_acidente",
+    "classificacao_acidente",
+    "fase_dia",
+    "sentido_via",
+    "condicao_metereologica",
+    "tipo_pista",
+    "tracado_via",
+    "uso_solo",
+    "pessoas",
+    "mortos",
+    "feridos_leves",
+    "feridos_graves",
+    "ilesos",
+    "ignorados",
+    "feridos",
+    "veiculos",
+    "latitude",
+    "longitude",
+    "regional",
+    "delegacia",
+    "uop"
+  ],
+  "date_min": "2026-01-01",
+  "date_max": "2026-07-31",
+  "duplicate_rows": 0,
+  "duplicate_ids": 0,
+  "missing_values": {
+    "classificacao_acidente": 1,
+    "regional": 1,
+    "delegacia": 10,
+    "uop": 22
+  },
+  "target_distribution": {
+    "Com Vítimas Feridas": 32726,
+    "Sem Vítimas": 6584,
+    "Com Vítimas Fatais": 3012
+  },
+  "numeric_summary": {
+    "km": {
+      "min": 0.0,
+      "max": 1260.0,
+      "mean": 259.4698242049052,
+      "missing": 0
+    },
+    "veiculos": {
+      "min": 1.0,
+      "max": 19.0,
+      "mean": 2.0101365719956523,
+      "missing": 0
+    },
+    "pessoas": {
+      "min": 1.0,
+      "max": 88.0,
+      "mean": 2.632295260148386,
+      "missing": 0
+    }
+  },
+  "model_features": [
+    "dia_semana",
+    "hora",
+    "causa_acidente",
+    "tipo_acidente",
+    "fase_dia",
+    "condicao_metereologica",
+    "tipo_pista",
+    "tracado_via",
+    "uso_solo",
+    "br",
+    "km",
+    "veiculos",
+    "pessoas"
+  ],
+  "excluded_outcome_columns": [
+    "mortos",
+    "feridos",
+    "feridos_leves",
+    "feridos_graves",
+    "ilesos",
+    "ignorados"
+  ]
+}

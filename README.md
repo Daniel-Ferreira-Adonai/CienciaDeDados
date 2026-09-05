@@ -1,115 +1,86 @@
-# Classificação da Gravidade de Acidentes em Rodovias Federais
+# Classificação da gravidade de acidentes em rodovias federais
 
-Projeto da disciplina de Ciência de Dados (UNIFOR).
+Projeto acadêmico da disciplina de Ciência de Dados (UNIFOR), desenvolvido pela equipe para analisar acidentes registrados pela Polícia Rodoviária Federal (PRF). O problema foi definido como uma classificação multiclasse da gravidade do acidente:
 
-## Objetivo
+- `Sem Vítimas`
+- `Com Vítimas Feridas`
+- `Com Vítimas Fatais`
 
-Construir e avaliar modelos de aprendizado de máquina para classificar a **gravidade de um acidente de trânsito** em rodovias federais no momento da sua ocorrência, a partir de circunstâncias conhecidas previamente (sem informações sobre o desfecho).
+## Escopo desta primeira entrega
 
-O problema é de **classificação multiclasse**, com a variável-alvo `classificacao_acidente` assumindo um dos seguintes valores:
+Esta versão estabelece a base reproduzível do projeto:
 
-- `sem vítimas`
-- `com vítimas feridas`
-- `com vítimas fatais`
+- leitura do CSV bruto com validação do esquema;
+- perfil da base e gráficos exploratórios iniciais;
+- tratamento do registro sem classificação publicada, usando `mortos` e `feridos` apenas para completar/validar o alvo;
+- preparação de uma base de modelagem com imputação, codificação categórica e transformação do horário;
+- baseline de regressão logística para criar uma referência quantitativa;
+- documentação para que todos os integrantes executem o mesmo fluxo.
 
-### Features utilizadas
+O roteiro completo da disciplina ainda prevê algoritmos individuais, comitês homogêneos e heterogêneos, meta-modelo, avaliação estatística, análise de erros, robustez, artigo e slides. Esses itens devem ser adicionados em etapas posteriores.
 
-Apenas circunstâncias conhecidas **no momento da ocorrência** do acidente:
+## Dados e controle de vazamento
 
-- dia da semana
-- horário
-- causa do acidente
-- tipo de acidente
-- fase do dia
-- condição meteorológica
-- tipo de pista
-- traçado da via
-- uso do solo
-- BR (rodovia)
-- km
-- número de veículos envolvidos
-- número de pessoas envolvidas
+O recorte atual é `datatran2026.csv`, com acidentes de 01/01/2026 a 31/07/2026. O arquivo original tem 30 colunas e não é versionado por ser um artefato bruto grande. Cada integrante deve baixá-lo do [Drive da equipe](https://drive.google.com/file/d/1A3IirNm0AzRaSosA1IS94DOVmvKsn0Ol/view) e salvá-lo como `data/raw/datatran2026.csv`. As instruções estão em [`data/raw/README.md`](data/raw/README.md).
 
-### Vazamento de dados (data leakage)
+**Atenção:** o PDF do trabalho menciona SSPDS-CE/IBGE como fonte, enquanto esta implementação usa o recorte PRF já escolhido pela equipe. Confirmem essa compatibilidade com a professora antes da entrega final.
 
-As colunas de **desfecho** do acidente — `mortos`, `feridos`, `feridos_leves`, `feridos_graves`, `ilesos`, `ignorados` — **não devem ser usadas como features**, pois são resultado direto do acidente e determinam trivialmente o rótulo, o que causaria vazamento de dados (data leakage) e invalidaria a avaliação do modelo. Essas colunas só podem ser usadas para **derivar/validar** a variável-alvo, nunca como entrada do modelo.
-
-## Fonte dos dados
-
-Dados abertos de acidentes registrados pela **Polícia Rodoviária Federal (PRF)**, referentes ao período de **2020 a 2026**.
-
-- Portal de dados abertos da PRF: https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf
-
-## Estrutura de pastas
-
-```
-.
-├── data/
-│   ├── raw/            # Dados brutos, exatamente como baixados da fonte (não versionar CSVs grandes)
-│   └── processed/       # Dados limpos/transformados, prontos para modelagem
-├── notebooks/            # Notebooks de análise exploratória (EDA) e experimentos
-├── src/                  # Código-fonte reutilizável (pré-processamento, features, treino, avaliação)
-├── models/               # Modelos treinados serializados (.pkl, .joblib)
-├── results/
-│   ├── figures/          # Gráficos e visualizações geradas
-│   └── metrics/          # Métricas de avaliação dos modelos (relatórios, tabelas)
-├── docs/
-│   ├── artigo/           # Artigo científico do projeto
-│   └── slides/           # Slides de apresentação
-├── requirements.txt
-├── .gitignore
-└── README.md
-```
+As colunas de desfecho (`mortos`, `feridos`, `feridos_leves`, `feridos_graves`, `ilesos` e `ignorados`) não entram como atributos dos modelos. Elas só podem apoiar a derivação ou a validação do rótulo, pois usá-las como entrada seria vazamento de dados.
 
 ## Instalação
 
-1. Clone o repositório:
+```bash
+python -m venv .venv
 
-   ```bash
-   git clone <url-do-repositorio>
-   cd TrabalhoCynthia
-   ```
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
 
-2. Crie e ative um ambiente virtual:
+# Linux/macOS: source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-   ```bash
-   python -m venv venv
+## Execução reproduzível
 
-   # Windows
-   venv\Scripts\activate
+Na raiz do repositório, com o CSV em `data/raw/`:
 
-   # Linux/macOS
-   source venv/bin/activate
-   ```
+```bash
+python scripts/run_eda.py
+```
 
-3. Instale as dependências:
+O comando gera:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+- `results/metrics/data_profile.json`: perfil e auditoria da base;
+- `results/metrics/baseline_metrics.json`: métricas da baseline;
+- `results/metrics/baseline_confusion_matrix.csv`: matriz de confusão;
+- `results/figures/`: distribuição das classes, ausências e variáveis numéricas;
+- `data/processed/modeling_base.csv`: base derivada local, também ignorada pelo Git.
 
-## Reprodução dos experimentos
+Para usar outro arquivo:
 
-1. Coloque a base de dados bruta da PRF em `data/raw/`.
-2. Execute os notebooks/scripts de pré-processamento para gerar os dados limpos em `data/processed/`.
-3. Execute os notebooks de análise exploratória em `notebooks/`.
-4. Execute o treinamento dos modelos (os artefatos treinados serão salvos em `models/`).
-5. Execute a avaliação dos modelos; figuras e métricas serão salvas em `results/figures/` e `results/metrics/`, respectivamente.
+```bash
+python scripts/run_eda.py --input caminho/para/base.csv
+```
 
-> Observação: a estrutura de código de pré-processamento, features, treino e avaliação ainda será adicionada em `src/`.
+## Estrutura
+
+```text
+data/raw/          CSV bruto local e instruções de obtenção
+data/processed/   bases derivadas, não versionadas
+notebooks/         análises exploratórias e experimentos interativos
+src/               pipeline de dados e modelos reutilizáveis
+scripts/           pontos de entrada executáveis
+models/            modelos treinados (não versionados)
+results/           métricas e figuras produzidas
+docs/              documentação técnica e do artigo
+```
 
 ## Equipe
 
 | Nome | Matrícula | E-mail |
-|------|-----------|--------|
+|---|---:|---|
 | Daniel Felix | 2320432 | d.calpi100@gmail.com |
 | Maximus Ulisses | 2320436 | Ulissesmagalhaes308@gmail.com |
 | Josue Castro | 2320426 | josubeba115@gmail.com |
 | Davi Klein | 2327146 | davimonteklein1711@gmail.com |
 
-Disciplina: Ciência de Dados — Universidade de Fortaleza (UNIFOR)
-
-## Licença
-
-Este projeto tem finalidade exclusivamente **acadêmica**, desenvolvido no âmbito da disciplina de Ciência de Dados da UNIFOR. Os dados utilizados são públicos e disponibilizados pela Polícia Rodoviária Federal (PRF). O conteúdo deste repositório não deve ser utilizado para fins comerciais.
-# CienciaDeDados
+Disciplina: Ciência de Dados — Universidade de Fortaleza (UNIFOR).
