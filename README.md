@@ -55,6 +55,16 @@ O comando gera:
 - `results/figures/`: distribuição das classes, ausências e variáveis numéricas;
 - `data/processed/modeling_base.csv`: base derivada local, também ignorada pelo Git.
 
+## Entrega da Sprint 1
+
+Depois de executar a análise exploratória, gere a primeira versão do relatório com:
+
+```bash
+python scripts/build_sprint1_report.py
+```
+
+O arquivo final será criado em `docs/artigo/relatorio_sprint_1.pdf`. O roteiro de conferência da entrega, incluindo os itens que precisam ser realizados no Trello, está em [`docs/checklist_sprint_1.md`](docs/checklist_sprint_1.md).
+
 Para usar outro arquivo:
 
 ```bash

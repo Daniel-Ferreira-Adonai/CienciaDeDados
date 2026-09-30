@@ -1,0 +1,111 @@
+{
+  "distribuicao_classes": {
+    "quantidade": {
+      "Sem Vítimas": 6584,
+      "Com Vítimas Feridas": 32726,
+      "Com Vítimas Fatais": 3012
+    },
+    "percentual": {
+      "Sem Vítimas": 15.557,
+      "Com Vítimas Feridas": 77.326,
+      "Com Vítimas Fatais": 7.117
+    }
+  },
+  "estatisticas_numericas": {
+    "hora": {
+      "count": 42322.0,
+      "mean": 12.855,
+      "std": 6.019,
+      "min": 0.0,
+      "25%": 8.0,
+      "50%": 14.0,
+      "75%": 18.0,
+      "max": 23.0
+    },
+    "km": {
+      "count": 42322.0,
+      "mean": 259.47,
+      "std": 226.96,
+      "min": 0.0,
+      "25%": 76.5,
+      "50%": 190.25,
+      "75%": 408.9,
+      "max": 1260.0
+    },
+    "veiculos": {
+      "count": 42322.0,
+      "mean": 2.01,
+      "std": 1.11,
+      "min": 1.0,
+      "25%": 1.0,
+      "50%": 2.0,
+      "75%": 2.0,
+      "max": 19.0
+    },
+    "pessoas": {
+      "count": 42322.0,
+      "mean": 2.632,
+      "std": 2.251,
+      "min": 1.0,
+      "25%": 2.0,
+      "50%": 2.0,
+      "75%": 3.0,
+      "max": 88.0
+    }
+  },
+  "correlacao_numericas": {
+    "hora": {
+      "hora": 1.0,
+      "km": -0.0115,
+      "veiculos": 0.0188,
+      "pessoas": 0.0012
+    },
+    "km": {
+      "hora": -0.0115,
+      "km": 1.0,
+      "veiculos": 0.0395,
+      "pessoas": 0.0391
+    },
+    "veiculos": {
+      "hora": 0.0188,
+      "km": 0.0395,
+      "veiculos": 1.0,
+      "pessoas": 0.4186
+    },
+    "pessoas": {
+      "hora": 0.0012,
+      "km": 0.0391,
+      "veiculos": 0.4186,
+      "pessoas": 1.0
+    }
+  },
+  "fase_dia_por_classe": {
+    "Sem Vítimas": {
+      "Amanhecer": 356,
+      "Pleno dia": 3228,
+      "Anoitecer": 305,
+      "Plena Noite": 2695
+    },
+    "Com Vítimas Feridas": {
+      "Amanhecer": 1477,
+      "Pleno dia": 18995,
+      "Anoitecer": 1848,
+      "Plena Noite": 10406
+    },
+    "Com Vítimas Fatais": {
+      "Amanhecer": 226,
+      "Pleno dia": 1164,
+      "Anoitecer": 161,
+      "Plena Noite": 1461
+    }
+  },
+  "acidentes_por_dia_semana": {
+    "segunda-feira": 5796,
+    "terça-feira": 5320,
+    "quarta-feira": 5469,
+    "quinta-feira": 5905,
+    "sexta-feira": 6700,
+    "sábado": 6489,
+    "domingo": 6643
+  }
+}
