@@ -18,6 +18,7 @@ import matplotlib
 # O script roda sem interface gráfica e salva as figuras diretamente em PNG.
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 from src.data_pipeline import (
@@ -107,10 +108,18 @@ def _save_numeric_histograms(modeling: pd.DataFrame, figures_dir: Path) -> None:
         "veiculos": "Veículos envolvidos",
         "pessoas": "Pessoas envolvidas",
     }
+    # veiculos e pessoas concentram mais de 90% dos casos em 1-3 unidades; sem
+    # escala logarítmica, a cauda longa desses dois atributos fica invisível.
+    log_scale_columns = {"veiculos", "pessoas"}
     figure, axes = plt.subplots(2, 2, figsize=(11, 8))
     for axis, column in zip(axes.flat, NUMERIC_EDA_COLUMNS, strict=True):
-        axis.hist(modeling[column].dropna(), bins=30, color="#4a8f65", edgecolor="white")
-        axis.set_title(labels[column])
+        bins = range(1, 21) if column in log_scale_columns else 30
+        axis.hist(modeling[column].dropna(), bins=bins, color="#4a8f65", edgecolor="white")
+        title = labels[column]
+        if column in log_scale_columns:
+            axis.set_yscale("log")
+            title += " (eixo em escala logarítmica)"
+        axis.set_title(title)
         axis.set_xlabel(labels[column])
         axis.set_ylabel("Quantidade de acidentes")
     figure.suptitle("Distribuição das variáveis numéricas", y=1.02)
@@ -127,6 +136,9 @@ def _save_boxplots(modeling: pd.DataFrame, figures_dir: Path) -> None:
         "veiculos": "Veículos envolvidos",
         "pessoas": "Pessoas envolvidas",
     }
+    # veiculos e pessoas têm outliers tão extremos que, em escala linear, a
+    # caixa e a mediana ficam achatadas perto de zero e viram uma linha única.
+    log_scale_columns = {"veiculos", "pessoas"}
     figure, axes = plt.subplots(1, 3, figsize=(15, 5.5))
     for axis, column in zip(axes, columns, strict=True):
         values = [modeling.loc[modeling[TARGET_COLUMN].eq(label), column].dropna() for label in labels]
@@ -134,7 +146,11 @@ def _save_boxplots(modeling: pd.DataFrame, figures_dir: Path) -> None:
         for patch, label in zip(box["boxes"], labels, strict=True):
             patch.set_facecolor(TARGET_COLORS[label])
             patch.set_alpha(0.7)
-        axis.set_title(names[column])
+        title = names[column]
+        if column in log_scale_columns:
+            axis.set_yscale("log")
+            title += " (eixo em escala logarítmica)"
+        axis.set_title(title)
         axis.set_xlabel("Classe de gravidade")
         axis.set_ylabel(names[column])
         axis.tick_params(axis="x", rotation=20)
@@ -169,28 +185,75 @@ def _save_correlation(modeling: pd.DataFrame, figures_dir: Path) -> pd.DataFrame
 
 
 def _save_scatter(modeling: pd.DataFrame, figures_dir: Path) -> None:
-    """Exibe a relação entre localização do acidente e pessoas envolvidas."""
+    """Compara a densidade de km x pessoas envolvidas entre as classes.
+
+    Um único scatter com as três classes sobrepostas satura visualmente nos
+    valores baixos de pessoas, onde a maioria dos acidentes se concentra, e
+    não deixa comparar as classes. Pessoas é essencialmente discreta (1 a 10
+    cobre 99,4% dos casos), então um histograma 2D com um bin por valor
+    inteiro - em vez de um hexbin, cujas células hexagonais não alinham com
+    números inteiros - representa a contagem real sem distorção visual.
+    """
 
     labels = _available_targets(modeling)
-    # A amostra fixa reduz sobreposição visual e mantém a figura reproduzível.
-    sample = modeling.sample(n=min(12_000, len(modeling)), random_state=42)
-    figure, axis = plt.subplots(figsize=(9, 6))
+    y_max = 10
+    people_edges = np.arange(0.5, y_max + 1.5, 1.0)
+    km_edges = np.linspace(0, modeling["km"].max(), 21)
+    # As classes têm tamanhos muito diferentes (de ~2 mil a ~26 mil acidentes),
+    # então cada painel traz sua própria barra de cor para comparar a FORMA da
+    # distribuição; uma escala absoluta compartilhada apagaria as duas classes
+    # minoritárias diante da classe majoritária.
+    figure, axes = plt.subplots(1, len(labels), figsize=(5.2 * len(labels), 5))
+    axes = [axes] if len(labels) == 1 else list(axes)
+    for axis, label in zip(axes, labels, strict=True):
+        subset = modeling.loc[modeling[TARGET_COLUMN].eq(label)]
+        counts, _, _ = np.histogram2d(subset["km"], subset["pessoas"], bins=(km_edges, people_edges))
+        mesh = axis.pcolormesh(km_edges, people_edges, counts.T, cmap="YlGnBu", vmin=0)
+        figure.colorbar(mesh, ax=axis, label="Acidentes por célula", shrink=0.85)
+        axis.set_title(f"{label} (n={len(subset):,})".replace(",", "."), color=TARGET_COLORS[label], fontweight="bold")
+        axis.set_xlabel("Quilômetro da rodovia (km)")
+        axis.set_yticks(range(1, y_max + 1))
+        axis.set_ylim(0.5, y_max + 0.5)
+    axes[0].set_ylabel("Pessoas envolvidas (até 10)")
+    figure.suptitle("Densidade de acidentes por quilômetro e pessoas envolvidas, por classe")
+    figure.savefig(figures_dir / "dispersao_km_pessoas.png", dpi=180, bbox_inches="tight")
+    plt.close(figure)
+
+
+def _save_severity_by_accident_type(modeling: pd.DataFrame, figures_dir: Path, top_n: int = 8) -> pd.DataFrame:
+    """Mostra a taxa de gravidade dentro dos tipos de acidente mais frequentes.
+
+    Os atributos numéricos (km, hora, veículos, pessoas) quase não se
+    correlacionam com a gravidade (Figura 5); este gráfico testa se um
+    atributo categórico - tipo_acidente - carrega mais sinal.
+    """
+
+    labels = _available_targets(modeling)
+    top_types = modeling["tipo_acidente"].value_counts().head(top_n).index.tolist()
+    subset = modeling.loc[modeling["tipo_acidente"].isin(top_types)]
+    counts = pd.crosstab(subset["tipo_acidente"], subset[TARGET_COLUMN]).reindex(columns=labels, fill_value=0)
+    rate = counts.div(counts.sum(axis=1), axis=0) * 100
+    # Ordenar pela taxa de fatais destaca o tipo mais crítico no topo do gráfico.
+    rate = rate.sort_values("Com Vítimas Fatais")
+    counts = counts.loc[rate.index]
+
+    figure, axis = plt.subplots(figsize=(10, 5.5))
+    left = pd.Series(0.0, index=rate.index)
     for label in labels:
-        subset = sample.loc[sample[TARGET_COLUMN].eq(label)]
-        axis.scatter(
-            subset["km"],
-            subset["pessoas"],
-            s=10,
-            alpha=0.25,
-            color=TARGET_COLORS[label],
-            label=label,
-            edgecolors="none",
-        )
-    axis.set_title("Relação entre quilômetro da rodovia e pessoas envolvidas")
-    axis.set_xlabel("Quilômetro da rodovia (km)")
-    axis.set_ylabel("Pessoas envolvidas")
-    axis.legend(title="Classe de gravidade")
-    _save_figure(figure, figures_dir / "dispersao_km_pessoas.png")
+        axis.barh(rate.index, rate[label], left=left, color=TARGET_COLORS[label], label=label)
+        left = left + rate[label]
+    for row, (type_name, fatal_rate) in enumerate(rate["Com Vítimas Fatais"].items()):
+        axis.text(100.5, row, f"{fatal_rate:.1f}% fatais", va="center", fontsize=8.5)
+    axis.set_xlim(0, 118)
+    axis.set_xlabel("Percentual de acidentes (%)")
+    axis.set_title(f"Gravidade dentro dos {top_n} tipos de acidente mais frequentes")
+    axis.legend(
+        title="Classe de gravidade", loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3,
+    )
+    _save_figure(figure, figures_dir / "gravidade_por_tipo_acidente.png")
+
+    summary = counts.join(rate, lsuffix="_n", rsuffix="_pct")
+    return summary
 
 
 def _save_phase_distribution(modeling: pd.DataFrame, figures_dir: Path) -> pd.DataFrame:
@@ -244,6 +307,7 @@ def _save_eda_artifacts(raw: pd.DataFrame, modeling: pd.DataFrame, output_dir: P
     _save_scatter(modeling, figures_dir)
     phase = _save_phase_distribution(modeling, figures_dir)
     weekday = _save_weekday_distribution(modeling, figures_dir)
+    severity_by_type = _save_severity_by_accident_type(modeling, figures_dir)
 
     numeric_description = modeling[NUMERIC_EDA_COLUMNS].describe(
         percentiles=[0.25, 0.5, 0.75]
@@ -263,6 +327,7 @@ def _save_eda_artifacts(raw: pd.DataFrame, modeling: pd.DataFrame, output_dir: P
     phase.to_csv(metrics_dir / "fase_dia_por_classe.csv", encoding="utf-8")
     weekday.rename("quantidade").to_csv(metrics_dir / "acidentes_por_dia_semana.csv", encoding="utf-8")
     class_summary.to_csv(metrics_dir / "distribuicao_classes.csv", encoding="utf-8")
+    severity_by_type.round(3).to_csv(metrics_dir / "gravidade_por_tipo_acidente.csv", encoding="utf-8")
     save_json(
         {
             "distribuicao_classes": _as_jsonable(class_summary),
@@ -270,6 +335,7 @@ def _save_eda_artifacts(raw: pd.DataFrame, modeling: pd.DataFrame, output_dir: P
             "correlacao_numericas": _as_jsonable(correlation.round(4)),
             "fase_dia_por_classe": _as_jsonable(phase),
             "acidentes_por_dia_semana": _as_jsonable(weekday),
+            "gravidade_por_tipo_acidente": _as_jsonable(severity_by_type.round(3)),
         },
         metrics_dir / "eda_summary.json",
     )

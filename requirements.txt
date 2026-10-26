@@ -7,3 +7,5 @@ scipy
 jupyter
 openpyxl
 reportlab
+imbalanced-learn
+category_encoders

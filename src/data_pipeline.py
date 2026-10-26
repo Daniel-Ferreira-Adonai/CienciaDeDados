@@ -22,10 +22,32 @@ RAW_FEATURE_COLUMNS = [
     "condicao_metereologica", "tipo_pista", "tracado_via", "uso_solo", "br",
     "km", "veiculos", "pessoas",
 ]
+# tracado_via chega como combinações livres separadas por ";" (ex.: "Aclive;Reta"
+# e "Reta;Aclive" contam como categorias distintas), com 432 valores únicos em
+# 33.694 linhas e 200 deles aparecendo uma única vez - one-hot nessa coluna
+# criaria centenas de colunas esparsas e categorias nunca vistas no treino.
+# Mafort e Kappel (2025) resolveram o mesmo problema na variável equivalente
+# decompondo-a em atributos derivados; aqui cada característica física vira
+# uma coluna binária própria, o que também remove a sensibilidade à ordem.
+TRACADO_TOKEN_COLUMNS: dict[str, str] = {
+    "Reta": "tracado_reta",
+    "Curva": "tracado_curva",
+    "Aclive": "tracado_aclive",
+    "Declive": "tracado_declive",
+    "Interseção de Vias": "tracado_intersecao",
+    "Retorno Regulamentado": "tracado_retorno_regulamentado",
+    "Rotatória": "tracado_rotatoria",
+    "Em Obras": "tracado_em_obras",
+    "Viaduto": "tracado_viaduto",
+    "Ponte": "tracado_ponte",
+    "Desvio Temporário": "tracado_desvio_temporario",
+    "Túnel": "tracado_tunel",
+}
+TRACADO_FLAG_COLUMNS = list(TRACADO_TOKEN_COLUMNS.values())
 MODEL_FEATURE_COLUMNS = [
     "dia_semana", "hora", "causa_acidente", "tipo_acidente", "fase_dia",
-    "condicao_metereologica", "tipo_pista", "tracado_via", "uso_solo", "br",
-    "km", "veiculos", "pessoas",
+    "condicao_metereologica", "tipo_pista", "uso_solo", "br",
+    "km", "veiculos", "pessoas", *TRACADO_FLAG_COLUMNS,
 ]
 OUTCOME_COLUMNS = [
     "mortos", "feridos", "feridos_leves", "feridos_graves", "ilesos", "ignorados",
@@ -33,10 +55,16 @@ OUTCOME_COLUMNS = [
 # Estas colunas são obrigatórias para garantir que a base recebida tem o
 # mesmo esquema usado pela equipe nos experimentos.
 REQUIRED_COLUMNS = ["id", TARGET_COLUMN, *RAW_FEATURE_COLUMNS, *OUTCOME_COLUMNS]
-CATEGORICAL_COLUMNS = [
-    "dia_semana", "causa_acidente", "tipo_acidente", "fase_dia",
-    "condicao_metereologica", "tipo_pista", "tracado_via", "uso_solo", "br",
+# Atributos categóricos de baixa cardinalidade (até ~17 categorias) recebem
+# one-hot; causa_acidente (69 categorias) e br (110 categorias) têm cardinalidade
+# alta demais para one-hot sem gerar colunas extremamente esparsas, por isso
+# usam codificação por média do alvo (ver CATEGORICAL_HIGH_CARDINALITY_COLUMNS
+# em src/modeling.py).
+CATEGORICAL_LOW_CARDINALITY_COLUMNS = [
+    "dia_semana", "tipo_acidente", "fase_dia", "condicao_metereologica", "tipo_pista", "uso_solo",
 ]
+CATEGORICAL_HIGH_CARDINALITY_COLUMNS = ["causa_acidente", "br"]
+CATEGORICAL_COLUMNS = [*CATEGORICAL_LOW_CARDINALITY_COLUMNS, *CATEGORICAL_HIGH_CARDINALITY_COLUMNS]
 NUMERIC_COLUMNS = ["hora", "km", "veiculos", "pessoas"]
 
 
@@ -119,7 +147,9 @@ def prepare_modeling_data(data: pd.DataFrame) -> pd.DataFrame:
 
     O horário é convertido em hora inteira para não transformar cada minuto em
     uma categoria independente. `br` permanece categórica, pois representa o
-    código da rodovia, não uma grandeza contínua.
+    código da rodovia, não uma grandeza contínua. `tracado_via` é decomposta em
+    colunas binárias (uma por característica da via) em vez de usada como uma
+    única categórica de alta cardinalidade.
     """
 
     prepared = data.copy()
@@ -135,6 +165,10 @@ def prepare_modeling_data(data: pd.DataFrame) -> pd.DataFrame:
     for column in ("km", "veiculos", "pessoas"):
         prepared[column] = _numeric(prepared, column)
     prepared["br"] = prepared["br"].astype("string")
+    for token, column in TRACADO_TOKEN_COLUMNS.items():
+        prepared[column] = prepared["tracado_via"].astype("string").str.contains(
+            token, regex=False, na=False
+        ).astype("int64")
 
     # A seleção explícita é a principal barreira contra o vazamento das
     # colunas de desfecho (mortos, feridos, ilesos etc.).

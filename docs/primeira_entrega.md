@@ -9,17 +9,17 @@ Preparar uma base sólida para classificar a gravidade de acidentes rodoviários
 1. **Aquisição reproduzível:** o CSV é mantido localmente em `data/raw/` e o repositório registra apenas a fonte e o nome esperado do arquivo.
 2. **Validação:** o pipeline verifica as colunas mínimas, padroniza textos e registra duplicidades, ausências, período e distribuição do alvo.
 3. **Controle de leakage:** as colunas de desfecho são usadas somente para completar a classificação ausente; a tabela de modelagem não as contém.
-4. **Pré-processamento:** variáveis categóricas recebem imputação pela moda e one-hot encoding; variáveis numéricas recebem imputação pela mediana e padronização; `horario` vira `hora`; `br` é categórica.
+4. **Pré-processamento:** `horario` vira `hora`; `tracado_via` é decomposta em 12 colunas binárias (uma por característica da via), pois chegava com 432 combinações distintas e sensíveis à ordem dos termos. Categóricas de baixa cardinalidade recebem imputação pela moda e one-hot; `causa_acidente` (69 categorias) e `br` (110 categorias) recebem imputação pela moda e codificação pela média do alvo (TargetEncoder). Numéricas recebem imputação pela mediana e padronização.
 5. **EDA inicial:** são produzidos gráficos de classes, valores ausentes e distribuições numéricas.
 6. **Referência experimental:** uma regressão logística balanceada cria a primeira baseline, usando divisão estratificada de treino e teste.
 
 ## Diagnóstico observado na base atual
 
-- 42.322 acidentes e 30 colunas.
+- 33.694 acidentes e 30 colunas.
 - Período de 01/01/2026 a 31/07/2026.
-- Classes publicadas: 6.584 sem vítimas, 32.726 com vítimas feridas e 3.011 com vítimas fatais; um registro não tinha classificação e foi completado a partir dos desfechos.
+- Classes publicadas: 5.195 sem vítimas, 26.032 com vítimas feridas e 2.467 com vítimas fatais; um registro não tinha classificação e foi completado a partir dos desfechos.
 - Não foram encontrados IDs duplicados.
-- Ausências principais: `uop` (22), `delegacia` (10), `regional` (1) e o rótulo publicado (1).
+- Ausências principais: `uop` (3.119), `delegacia` (3.111), `regional` (3.105) e o rótulo publicado (1).
 
 Os números acima são reproduzidos automaticamente em `results/metrics/data_profile.json`; não devem ser tratados como resultados definitivos antes das validações posteriores e dos experimentos exigidos pela disciplina.
 
@@ -29,7 +29,7 @@ O roteiro anexado ao trabalho menciona a utilização de dados da SSPDS-CE/IBGE.
 
 ## Baseline atual
 
-Na divisão estratificada 80/20, a regressão logística obteve acurácia de aproximadamente 0,5973, balanced accuracy de 0,6110 e F1 macro de 0,4899. Esses números são apenas referência inicial, não uma conclusão sobre o melhor modelo.
+Na divisão estratificada 80/20, a regressão logística obteve acurácia de aproximadamente 0,5792, balanced accuracy de 0,6017 e F1 macro de 0,4802, com `class_weight="balanced"` para lidar com o desbalanceamento. Testamos também reamostragem (SMOTE e SMOTEENN, da biblioteca imblearn) no lugar do peso por classe: SMOTE ficou no mesmo patamar (F1 macro 0,480), e SMOTEENN piorou bastante (F1 macro 0,374), então mantivemos `class_weight="balanced"` por ora. A literatura associa reamostragem a ganhos maiores quando combinada a modelos de árvore, então a comparação deve ser refeita quando esses algoritmos entrarem em cena. Esses números são apenas referência inicial, não uma conclusão sobre o melhor modelo.
 
 ## Decisões e limites
 

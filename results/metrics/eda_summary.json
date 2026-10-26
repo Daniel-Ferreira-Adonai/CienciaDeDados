@@ -1,51 +1,51 @@
 {
   "distribuicao_classes": {
     "quantidade": {
-      "Sem Vítimas": 6584,
-      "Com Vítimas Feridas": 32726,
-      "Com Vítimas Fatais": 3012
+      "Sem Vítimas": 5195,
+      "Com Vítimas Feridas": 26032,
+      "Com Vítimas Fatais": 2467
     },
     "percentual": {
-      "Sem Vítimas": 15.557,
-      "Com Vítimas Feridas": 77.326,
-      "Com Vítimas Fatais": 7.117
+      "Sem Vítimas": 15.418,
+      "Com Vítimas Feridas": 77.26,
+      "Com Vítimas Fatais": 7.322
     }
   },
   "estatisticas_numericas": {
     "hora": {
-      "count": 42322.0,
-      "mean": 12.855,
-      "std": 6.019,
+      "count": 33694.0,
+      "mean": 12.836,
+      "std": 6.03,
       "min": 0.0,
       "25%": 8.0,
-      "50%": 14.0,
+      "50%": 13.0,
       "75%": 18.0,
       "max": 23.0
     },
     "km": {
-      "count": 42322.0,
-      "mean": 259.47,
-      "std": 226.96,
+      "count": 33694.0,
+      "mean": 259.983,
+      "std": 226.751,
       "min": 0.0,
       "25%": 76.5,
-      "50%": 190.25,
-      "75%": 408.9,
+      "50%": 193.0,
+      "75%": 409.975,
       "max": 1260.0
     },
     "veiculos": {
-      "count": 42322.0,
-      "mean": 2.01,
-      "std": 1.11,
+      "count": 33694.0,
+      "mean": 2.008,
+      "std": 1.113,
       "min": 1.0,
       "25%": 1.0,
       "50%": 2.0,
       "75%": 2.0,
-      "max": 19.0
+      "max": 18.0
     },
     "pessoas": {
-      "count": 42322.0,
-      "mean": 2.632,
-      "std": 2.251,
+      "count": 33694.0,
+      "mean": 2.639,
+      "std": 2.289,
       "min": 1.0,
       "25%": 2.0,
       "50%": 2.0,
@@ -56,56 +56,118 @@
   "correlacao_numericas": {
     "hora": {
       "hora": 1.0,
-      "km": -0.0115,
-      "veiculos": 0.0188,
-      "pessoas": 0.0012
+      "km": -0.0122,
+      "veiculos": 0.021,
+      "pessoas": 0.0007
     },
     "km": {
-      "hora": -0.0115,
+      "hora": -0.0122,
       "km": 1.0,
-      "veiculos": 0.0395,
-      "pessoas": 0.0391
+      "veiculos": 0.0428,
+      "pessoas": 0.0366
     },
     "veiculos": {
-      "hora": 0.0188,
-      "km": 0.0395,
+      "hora": 0.021,
+      "km": 0.0428,
       "veiculos": 1.0,
-      "pessoas": 0.4186
+      "pessoas": 0.417
     },
     "pessoas": {
-      "hora": 0.0012,
-      "km": 0.0391,
-      "veiculos": 0.4186,
+      "hora": 0.0007,
+      "km": 0.0366,
+      "veiculos": 0.417,
       "pessoas": 1.0
     }
   },
   "fase_dia_por_classe": {
     "Sem Vítimas": {
-      "Amanhecer": 356,
-      "Pleno dia": 3228,
-      "Anoitecer": 305,
-      "Plena Noite": 2695
+      "Amanhecer": 290,
+      "Pleno dia": 2568,
+      "Anoitecer": 233,
+      "Plena Noite": 2104
     },
     "Com Vítimas Feridas": {
-      "Amanhecer": 1477,
-      "Pleno dia": 18995,
-      "Anoitecer": 1848,
-      "Plena Noite": 10406
+      "Amanhecer": 1166,
+      "Pleno dia": 15277,
+      "Anoitecer": 1454,
+      "Plena Noite": 8135
     },
     "Com Vítimas Fatais": {
-      "Amanhecer": 226,
-      "Pleno dia": 1164,
-      "Anoitecer": 161,
-      "Plena Noite": 1461
+      "Amanhecer": 196,
+      "Pleno dia": 948,
+      "Anoitecer": 126,
+      "Plena Noite": 1197
     }
   },
   "acidentes_por_dia_semana": {
-    "segunda-feira": 5796,
-    "terça-feira": 5320,
-    "quarta-feira": 5469,
-    "quinta-feira": 5905,
-    "sexta-feira": 6700,
-    "sábado": 6489,
-    "domingo": 6643
+    "segunda-feira": 4610,
+    "terça-feira": 4227,
+    "quarta-feira": 4389,
+    "quinta-feira": 4674,
+    "sexta-feira": 5231,
+    "sábado": 5237,
+    "domingo": 5326
+  },
+  "gravidade_por_tipo_acidente": {
+    "Sem Vítimas_n": {
+      "Colisão lateral mesmo sentido": 476,
+      "Queda de ocupante de veículo": 37,
+      "Tombamento": 160,
+      "Colisão traseira": 1047,
+      "Colisão transversal": 358,
+      "Saída de leito carroçável": 1049,
+      "Colisão com objeto": 627,
+      "Colisão frontal": 128
+    },
+    "Com Vítimas Feridas_n": {
+      "Colisão lateral mesmo sentido": 3119,
+      "Queda de ocupante de veículo": 1538,
+      "Tombamento": 2637,
+      "Colisão traseira": 5406,
+      "Colisão transversal": 3750,
+      "Saída de leito carroçável": 3535,
+      "Colisão com objeto": 1534,
+      "Colisão frontal": 1386
+    },
+    "Com Vítimas Fatais_n": {
+      "Colisão lateral mesmo sentido": 110,
+      "Queda de ocupante de veículo": 49,
+      "Tombamento": 125,
+      "Colisão traseira": 314,
+      "Colisão transversal": 224,
+      "Saída de leito carroçável": 255,
+      "Colisão com objeto": 130,
+      "Colisão frontal": 669
+    },
+    "Sem Vítimas_pct": {
+      "Colisão lateral mesmo sentido": 12.848,
+      "Queda de ocupante de veículo": 2.278,
+      "Tombamento": 5.476,
+      "Colisão traseira": 15.472,
+      "Colisão transversal": 8.264,
+      "Saída de leito carroçável": 21.678,
+      "Colisão com objeto": 27.368,
+      "Colisão frontal": 5.863
+    },
+    "Com Vítimas Feridas_pct": {
+      "Colisão lateral mesmo sentido": 84.184,
+      "Queda de ocupante de veículo": 94.704,
+      "Tombamento": 90.246,
+      "Colisão traseira": 79.888,
+      "Colisão transversal": 86.565,
+      "Saída de leito carroçável": 73.052,
+      "Colisão com objeto": 66.958,
+      "Colisão frontal": 63.491
+    },
+    "Com Vítimas Fatais_pct": {
+      "Colisão lateral mesmo sentido": 2.969,
+      "Queda de ocupante de veículo": 3.017,
+      "Tombamento": 4.278,
+      "Colisão traseira": 4.64,
+      "Colisão transversal": 5.171,
+      "Saída de leito carroçável": 5.27,
+      "Colisão com objeto": 5.674,
+      "Colisão frontal": 30.646
+    }
   }
 }

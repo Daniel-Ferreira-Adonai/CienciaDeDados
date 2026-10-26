@@ -1,5 +1,5 @@
 {
-  "rows": 42322,
+  "rows": 33694,
   "columns": 30,
   "column_names": [
     "id",
@@ -39,32 +39,32 @@
   "duplicate_ids": 0,
   "missing_values": {
     "classificacao_acidente": 1,
-    "regional": 1,
-    "delegacia": 10,
-    "uop": 22
+    "regional": 3105,
+    "delegacia": 3111,
+    "uop": 3119
   },
   "target_distribution": {
-    "Com Vítimas Feridas": 32726,
-    "Sem Vítimas": 6584,
-    "Com Vítimas Fatais": 3012
+    "Com Vítimas Feridas": 26032,
+    "Sem Vítimas": 5195,
+    "Com Vítimas Fatais": 2467
   },
   "numeric_summary": {
     "km": {
       "min": 0.0,
       "max": 1260.0,
-      "mean": 259.4698242049052,
+      "mean": 259.98253101442396,
       "missing": 0
     },
     "veiculos": {
       "min": 1.0,
-      "max": 19.0,
-      "mean": 2.0101365719956523,
+      "max": 18.0,
+      "mean": 2.0076274707663084,
       "missing": 0
     },
     "pessoas": {
       "min": 1.0,
       "max": 88.0,
-      "mean": 2.632295260148386,
+      "mean": 2.6394313527631033,
       "missing": 0
     }
   },
@@ -76,12 +76,23 @@
     "fase_dia",
     "condicao_metereologica",
     "tipo_pista",
-    "tracado_via",
     "uso_solo",
     "br",
     "km",
     "veiculos",
-    "pessoas"
+    "pessoas",
+    "tracado_reta",
+    "tracado_curva",
+    "tracado_aclive",
+    "tracado_declive",
+    "tracado_intersecao",
+    "tracado_retorno_regulamentado",
+    "tracado_rotatoria",
+    "tracado_em_obras",
+    "tracado_viaduto",
+    "tracado_ponte",
+    "tracado_desvio_temporario",
+    "tracado_tunel"
   ],
   "excluded_outcome_columns": [
     "mortos",

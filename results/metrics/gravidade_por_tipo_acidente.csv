@@ -1,0 +1,9 @@
+tipo_acidente,Sem Vítimas_n,Com Vítimas Feridas_n,Com Vítimas Fatais_n,Sem Vítimas_pct,Com Vítimas Feridas_pct,Com Vítimas Fatais_pct
+Colisão lateral mesmo sentido,476,3119,110,12.848,84.184,2.969
+Queda de ocupante de veículo,37,1538,49,2.278,94.704,3.017
+Tombamento,160,2637,125,5.476,90.246,4.278
+Colisão traseira,1047,5406,314,15.472,79.888,4.64
+Colisão transversal,358,3750,224,8.264,86.565,5.171
+Saída de leito carroçável,1049,3535,255,21.678,73.052,5.27
+Colisão com objeto,627,1534,130,27.368,66.958,5.674
+Colisão frontal,128,1386,669,5.863,63.491,30.646
